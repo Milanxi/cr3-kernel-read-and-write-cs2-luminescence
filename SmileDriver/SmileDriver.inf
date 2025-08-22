@@ -1,0 +1,72 @@
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=SmileDriver.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+SmileDriver_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+SmileDriver.sys = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%SmileDriver.DeviceDesc%=SmileDriver_Device, Root\SmileDriver
+
+[SmileDriver_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+SmileDriver.sys
+
+;-------------- Service installation
+[SmileDriver_Device.NT.Services]
+AddService = SmileDriver,%SPSVCINST_ASSOCSERVICE%, SmileDriver_Service_Inst
+
+; -------------- SmileDriver driver install sections
+[SmileDriver_Service_Inst]
+DisplayName    = %SmileDriver.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\SmileDriver.sys
+
+;
+;--- SmileDriver_Device Coinstaller installation ------
+;
+
+[SmileDriver_Device.NT.CoInstallers]
+AddReg=SmileDriver_Device_CoInstaller_AddReg
+CopyFiles=SmileDriver_Device_CoInstaller_CopyFiles
+
+[SmileDriver_Device_CoInstaller_AddReg]
+;
+
+[SmileDriver_Device_CoInstaller_CopyFiles]
+;
+
+[SmileDriver_Device.NT.Wdf]
+KmdfService =  SmileDriver, SmileDriver_wdfsect
+
+[SmileDriver_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your Company Name>" ;TODO: Replace with your manufacturer name
+DiskName = "SmileDriver Installation Disk"
+SmileDriver.DeviceDesc = "SmileDriver Device"
+SmileDriver.SVCDESC = "SmileDriver Service" 
